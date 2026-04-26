@@ -1,0 +1,22 @@
+{
+  "name": "game-store-mern",
+  "version": "1.0.0",
+  "private": true,
+  "description": "A MERN game store with customer checkout flow and admin catalog management.",
+  "scripts": {
+    "dev": "concurrently \"npm run server\" \"npm run client\"",
+    "server": "npm --prefix server run dev",
+    "client": "npm --prefix client run dev",
+    "build": "npm --prefix client run build",
+    "test": "npm --prefix server test && npm --prefix client test",
+    "test:server": "npm --prefix server test",
+    "test:client": "npm --prefix client test",
+    "start": "npm --prefix server start",
+    "start:prod": "npm run build && npm start",
+    "install:all": "npm install && npm --prefix server install && npm --prefix client install",
+    "seed": "npm --prefix server run seed"
+  },
+  "devDependencies": {
+    "concurrently": "^9.1.2"
+  }
+}

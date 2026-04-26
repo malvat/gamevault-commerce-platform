@@ -1,0 +1,34 @@
+services:
+  game-store:
+    build: .
+    ports:
+      - "5000:5000"
+    env_file:
+      - server/.env
+    environment:
+      NODE_ENV: production
+      PORT: 5000
+      CLIENT_URL: http://localhost:5000
+    restart: unless-stopped
+    volumes:
+      - ./server/reports:/app/server/reports
+
+  weekly-report-scheduler:
+    build: .
+    env_file:
+      - server/.env
+    environment:
+      NODE_ENV: production
+      TZ: America/Toronto
+      WEEKLY_REPORT_OUTPUT_DIR: reports/weekly-orders
+    command: >
+      sh -c "cp /app/docker/weekly-report-crontab /etc/crontabs/root &&
+      echo 'Loaded weekly report schedule:' &&
+      cat /etc/crontabs/root &&
+      echo 'Scheduler container time:' &&
+      date &&
+      crond -f -l 8"
+    restart: unless-stopped
+    volumes:
+      - ./server/reports:/app/server/reports
+      - ./docker:/app/docker:ro
