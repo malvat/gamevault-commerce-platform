@@ -1,0 +1,30 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="900" height="600" viewBox="0 0 900 600" role="img" aria-label="Final Fantasy XIV: Endwalker cover">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#09111f"/>
+      <stop offset="0.58" stop-color="#101827"/>
+      <stop offset="1" stop-color="#2f6df6"/>
+    </linearGradient>
+    <radialGradient id="halo" cx="76%" cy="18%" r="62%">
+      <stop offset="0" stop-color="#54e0ff" stop-opacity="0.9"/>
+      <stop offset="1" stop-color="#54e0ff" stop-opacity="0"/>
+    </radialGradient>
+    <filter id="soft">
+      <feGaussianBlur stdDeviation="18"/>
+    </filter>
+  </defs>
+  <rect width="900" height="600" fill="url(#bg)"/>
+  <rect width="900" height="600" fill="url(#halo)"/>
+  <g opacity="0.18" stroke="#f8fafc" stroke-width="2">
+    <path d="M0 90 H900 M0 210 H900 M0 330 H900 M0 450 H900"/>
+    <path d="M90 0 V600 M230 0 V600 M370 0 V600 M510 0 V600 M650 0 V600 M790 0 V600"/>
+  </g>
+  <path d="M350 92 L424 252 L598 276 L472 394 L502 566 L350 480 L198 566 L228 394 L102 276 L276 252 Z" fill="#54e0ff" opacity="0.18" filter="url(#soft)"/>
+  <path d="M350 92 L424 252 L598 276 L472 394 L502 566 L350 480 L198 566 L228 394 L102 276 L276 252 Z" fill="none" stroke="#54e0ff" stroke-width="10" opacity="0.5"/>
+  <path d="M350 92 L424 252 L598 276 L472 394 L502 566 L350 480 L198 566 L228 394 L102 276 L276 252 Z" fill="#2f6df6" opacity="0.18"/>
+  <text x="70" y="76" fill="#b7c5d8" font-family="Inter, Arial, sans-serif" font-size="24" font-weight="800" letter-spacing="3">PS5 TOP 33</text>
+  <text x="70" y="118" fill="#54e0ff" font-family="Inter, Arial, sans-serif" font-size="18" font-weight="900" letter-spacing="4">RPG</text>
+  <text x="70" y="222" fill="#f8fafc" font-family="Inter, Arial, sans-serif" font-size="58" font-weight="900">Final Fantasy XIV:</text>
+  <text x="70" y="292" fill="#f8fafc" font-family="Inter, Arial, sans-serif" font-size="58" font-weight="900">Endwalker</text>
+  <text x="70" y="540" fill="#dbeafe" font-family="Inter, Arial, sans-serif" font-size="26" font-weight="800">Metascore 90 • PlayStation 5</text>
+</svg>
