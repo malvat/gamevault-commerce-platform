@@ -7,12 +7,13 @@ import { errorHandler, notFound } from "./middleware/errorMiddleware.js";
 import authRoutes from "./routes/authRoutes.js";
 import gameRoutes from "./routes/gameRoutes.js";
 import orderRoutes from "./routes/orderRoutes.js";
+import friendRoutes from "./routes/friendRoutes.js";
 import wishlistRoutes from "./routes/wishlistRoutes.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const clientDistPath = path.resolve(__dirname, "../../client/dist");
-const allowedOrigins = [
+export const allowedOrigins = [
   process.env.CLIENT_URL,
   "http://localhost:5173",
   "http://127.0.0.1:5173",
@@ -21,6 +22,7 @@ const allowedOrigins = [
   "http://localhost:5000"
 ].filter(Boolean);
 
+// Keep app creation separate from server startup so tests can import Express without opening a port.
 export const createApp = () => {
   const app = express();
 
@@ -43,7 +45,6 @@ export const createApp = () => {
     app.use(morgan("dev"));
   }
 
-  // Setting up routes
   app.get("/api/health", (req, res) => {
     res.json({ status: "ok", service: "game-store-api" });
   });
@@ -51,9 +52,9 @@ export const createApp = () => {
   app.use("/api/auth", authRoutes);
   app.use("/api/games", gameRoutes);
   app.use("/api/orders", orderRoutes);
+  app.use("/api/friends", friendRoutes);
   app.use("/api/wishlist", wishlistRoutes);
 
-  // Host frontend on the server
   app.use(express.static(clientDistPath));
 
   app.get("*", (req, res, next) => {

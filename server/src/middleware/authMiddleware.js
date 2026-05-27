@@ -12,6 +12,7 @@ export const protect = asyncHandler(async (req, res, next) => {
 
   const token = authHeader.split(" ")[1];
   const decoded = jwt.verify(token, process.env.JWT_SECRET);
+  // Attach the current user at the auth boundary so controllers can trust req.user.
   req.user = await User.findById(decoded.id).select("-password");
 
   if (!req.user) {

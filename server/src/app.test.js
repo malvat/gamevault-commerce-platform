@@ -3,7 +3,10 @@ import { MongoMemoryServer } from "mongodb-memory-server";
 import request from "supertest";
 import { afterAll, afterEach, beforeAll, describe, expect, it } from "vitest";
 import { createApp } from "./app.js";
+import Conversation from "./models/Conversation.js";
+import FriendRequest from "./models/FriendRequest.js";
 import Game from "./models/Game.js";
+import Message from "./models/Message.js";
 import Order from "./models/Order.js";
 import User from "./models/User.js";
 
@@ -32,7 +35,14 @@ describe("API", () => {
   });
 
   afterEach(async () => {
-    await Promise.all([User.deleteMany({}), Game.deleteMany({}), Order.deleteMany({})]);
+    await Promise.all([
+      User.deleteMany({}),
+      Game.deleteMany({}),
+      Order.deleteMany({}),
+      FriendRequest.deleteMany({}),
+      Conversation.deleteMany({}),
+      Message.deleteMany({})
+    ]);
   });
 
   afterAll(async () => {
@@ -134,5 +144,50 @@ describe("API", () => {
 
     expect(response.status).toBe(409);
     expect(response.body.message).toBe("You already own one or more games in this cart");
+  });
+
+  it("lets users become friends and exchange messages", async () => {
+    const maya = await registerUser({ firstName: "Maya", lastName: "Chen", email: "maya@example.com" });
+    const noah = await registerUser({ firstName: "Noah", lastName: "Singh", email: "noah@example.com" });
+
+    const search = await request(app)
+      .get("/api/friends/search?email=noah%40example.com")
+      .set("Authorization", `Bearer ${maya.body.token}`);
+
+    expect(search.status).toBe(200);
+    expect(search.body.status).toBe("none");
+    expect(search.body.user.email).toBe("noah@example.com");
+
+    const friendRequest = await request(app)
+      .post("/api/friends/requests")
+      .set("Authorization", `Bearer ${maya.body.token}`)
+      .send({ email: "noah@example.com" });
+
+    expect(friendRequest.status).toBe(201);
+    expect(friendRequest.body.status).toBe("pending");
+
+    const accepted = await request(app)
+      .post(`/api/friends/requests/${friendRequest.body._id}/accept`)
+      .set("Authorization", `Bearer ${noah.body.token}`);
+
+    expect(accepted.status).toBe(200);
+    expect(accepted.body.status).toBe("accepted");
+
+    const message = await request(app)
+      .post(`/api/friends/${noah.body._id}/messages`)
+      .set("Authorization", `Bearer ${maya.body.token}`)
+      .send({ body: "Want to squad up later?" });
+
+    expect(message.status).toBe(201);
+    expect(message.body).toMatchObject({
+      body: "Want to squad up later?"
+    });
+
+    const messages = await request(app)
+      .get(`/api/friends/${maya.body._id}/messages`)
+      .set("Authorization", `Bearer ${noah.body.token}`);
+
+    expect(messages.status).toBe(200);
+    expect(messages.body.messages[0].body).toBe("Want to squad up later?");
   });
 });

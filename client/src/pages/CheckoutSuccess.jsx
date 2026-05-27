@@ -20,6 +20,7 @@ const CheckoutSuccess = () => {
       return;
     }
 
+    // React effects can rerun; keep Stripe confirmation idempotent from the browser side too.
     if (confirmedSession.current === sessionId) {
       return;
     }

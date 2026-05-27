@@ -18,6 +18,7 @@ const outputDir = path.resolve(serverRoot, process.env.WEEKLY_REPORT_OUTPUT_DIR 
 
 const roundCurrency = (value) => Math.round(value * 100) / 100;
 
+// The reporting job is a private script, not an API endpoint, so scheduled work stays internal.
 export const buildReport = (orders, periodStart, periodEnd) => {
   const gamesById = new Map();
 
@@ -100,6 +101,7 @@ export const runWeeklyOrderReport = async () => {
 };
 
 if (process.argv[1] && fileURLToPath(import.meta.url) === path.resolve(process.argv[1])) {
+  // Only run automatically from the command line; tests can import buildReport without touching MongoDB.
   runWeeklyOrderReport().catch(async (error) => {
     console.error(`Weekly order report failed: ${error.message}`);
     await mongoose.disconnect().catch(() => {});

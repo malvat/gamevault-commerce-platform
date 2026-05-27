@@ -525,7 +525,9 @@ label {
 
 .cart-list,
 .orders-list,
-.admin-list {
+.admin-list,
+.request-list,
+.friends-list {
   display: grid;
   gap: 0.75rem;
 }
@@ -739,6 +741,229 @@ label {
   padding: 1rem 0;
 }
 
+.friends-page {
+  display: grid;
+  gap: 1.25rem;
+  grid-template-columns: minmax(0, 1fr) minmax(320px, 420px);
+}
+
+.friends-main,
+.chat-panel,
+.friend-result,
+.friend-panels > div {
+  background: rgba(255, 255, 255, 0.075);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
+}
+
+.friends-main,
+.chat-panel {
+  min-height: calc(100vh - 8rem);
+}
+
+.friends-main {
+  padding: 1rem;
+}
+
+.friends-main h1 {
+  font-size: clamp(2.2rem, 4vw, 3.7rem);
+}
+
+.friend-search {
+  align-items: end;
+  display: grid;
+  gap: 0.75rem;
+  grid-template-columns: minmax(0, 1fr) auto;
+  margin-bottom: 1rem;
+}
+
+.friend-search label {
+  margin-bottom: 0;
+}
+
+.friend-search label span,
+.message-form {
+  align-items: center;
+  display: flex;
+  gap: 0.55rem;
+}
+
+.friend-search input,
+.message-form input {
+  background: transparent;
+  border: 0;
+  color: #f4f7fb;
+  min-height: 2.8rem;
+  outline: 0;
+  width: 100%;
+}
+
+.friend-result,
+.friend-row,
+.chat-header {
+  align-items: center;
+  display: grid;
+  gap: 0.75rem;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+}
+
+.friend-result {
+  margin: 1rem 0;
+  padding: 0.85rem;
+}
+
+.friend-result h2,
+.friend-row strong,
+.chat-header h2 {
+  margin: 0;
+}
+
+.friend-result p,
+.friend-row span,
+.chat-header p,
+.friends-list small {
+  color: #9aa7ba;
+  display: block;
+  margin: 0;
+}
+
+.friend-avatar {
+  align-items: center;
+  aspect-ratio: 1;
+  background: #ffbf47;
+  border-radius: 8px;
+  color: #120b02;
+  display: inline-flex;
+  flex: 0 0 auto;
+  font-weight: 900;
+  justify-content: center;
+  width: 2.55rem;
+}
+
+.friend-panels {
+  display: grid;
+  gap: 1rem;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.friend-panels > div {
+  padding: 1rem;
+}
+
+.friend-row {
+  background: rgba(8, 13, 22, 0.45);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 8px;
+  grid-template-columns: auto minmax(0, 1fr) auto auto;
+  padding: 0.75rem;
+}
+
+.friend-row button {
+  min-height: 2.35rem;
+  padding: 0.45rem;
+}
+
+.outgoing-requests {
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  margin-top: 1rem;
+  padding-top: 1rem;
+}
+
+.outgoing-requests p {
+  margin-bottom: 0.4rem;
+}
+
+.friends-list button {
+  background: rgba(8, 13, 22, 0.45);
+  color: #f4f7fb;
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  justify-content: start;
+  text-align: left;
+}
+
+.friends-list button.active {
+  outline: 2px solid #23c483;
+}
+
+.chat-panel {
+  display: grid;
+  grid-template-rows: auto minmax(0, 1fr) auto;
+  overflow: hidden;
+}
+
+.chat-header {
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  padding: 1rem;
+}
+
+.chat-header svg {
+  color: #23c483;
+}
+
+.messages-list {
+  align-content: end;
+  display: grid;
+  gap: 0.65rem;
+  overflow-y: auto;
+  padding: 1rem;
+}
+
+.message-bubble {
+  background: rgba(255, 255, 255, 0.09);
+  border-radius: 8px;
+  justify-self: start;
+  max-width: min(78%, 24rem);
+  padding: 0.7rem 0.85rem;
+}
+
+.message-bubble.sent {
+  background: #23c483;
+  color: #06120d;
+  justify-self: end;
+}
+
+.message-bubble.received {
+  justify-self: start;
+}
+
+.message-bubble p {
+  color: inherit;
+  margin: 0;
+  overflow-wrap: anywhere;
+}
+
+.message-bubble span {
+  display: block;
+  font-size: 0.75rem;
+  font-weight: 800;
+  margin-top: 0.3rem;
+  opacity: 0.72;
+}
+
+.message-form {
+  background: rgba(8, 13, 22, 0.75);
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  padding: 0.75rem;
+}
+
+.message-form button {
+  min-height: 2.6rem;
+  padding: 0.6rem;
+}
+
+.empty-chat {
+  align-self: center;
+  justify-self: center;
+  max-width: 18rem;
+  padding: 1rem;
+  text-align: center;
+}
+
+.empty-chat svg {
+  color: #23c483;
+}
+
 @media (max-width: 850px) {
   .site-header,
   .toolbar {
@@ -755,7 +980,10 @@ label {
   }
 
   .detail-page,
-  .cart-page {
+  .cart-page,
+  .friends-page,
+  .friend-panels,
+  .friend-search {
     grid-template-columns: 1fr;
   }
 

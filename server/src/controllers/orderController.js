@@ -24,6 +24,7 @@ const stripeApiRequest = async (path, options = {}) => {
   return data;
 };
 
+// Centralize cart validation so direct orders and Stripe checkout use the same ownership rules.
 const validateCartItems = async (userId, items) => {
   if (!items?.length) {
     throw new Error("Order must contain at least one game");
@@ -106,6 +107,7 @@ export const createCheckoutSession = asyncHandler(async (req, res) => {
     "metadata[gameIds]": orderItems.map((item) => item.game.toString()).join(",")
   });
 
+  // Prices are sent from the server so checkout cannot be manipulated from browser cart state.
   orderItems.forEach((item, index) => {
     params.append(`line_items[${index}][quantity]`, String(item.quantity));
     params.append(`line_items[${index}][price_data][currency]`, "usd");
@@ -138,6 +140,7 @@ export const confirmCheckoutSession = asyncHandler(async (req, res) => {
   });
 
   if (existingOrder) {
+    // Confirmation can be retried safely if the success page reloads after Stripe redirects back.
     return res.json(existingOrder);
   }
 

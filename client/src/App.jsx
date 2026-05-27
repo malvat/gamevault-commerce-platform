@@ -5,6 +5,7 @@ import ProtectedRoute from "./components/ProtectedRoute.jsx";
 import AdminDashboard from "./pages/AdminDashboard.jsx";
 import Cart from "./pages/Cart.jsx";
 import GameDetails from "./pages/GameDetails.jsx";
+import Friends from "./pages/Friends.jsx";
 import Home from "./pages/Home.jsx";
 import Library from "./pages/Library.jsx";
 import Login from "./pages/Login.jsx";
@@ -46,6 +47,14 @@ function App() {
             element={
               <ProtectedRoute>
                 <Library />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/friends"
+            element={
+              <ProtectedRoute>
+                <Friends />
               </ProtectedRoute>
             }
           />

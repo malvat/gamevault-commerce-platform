@@ -1,5 +1,5 @@
 import React from "react";
-import { Gamepad2, LogOut, ShoppingCart, ShieldCheck, UserRound } from "lucide-react";
+import { Gamepad2, LogOut, MessageCircle, ShoppingCart, ShieldCheck, UserRound } from "lucide-react";
 import { Link, NavLink, useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext.jsx";
 import { useCart } from "../context/CartContext.jsx";
@@ -26,6 +26,12 @@ const Header = () => {
         <NavLink to="/">Store</NavLink>
         {user && !isAdmin && <NavLink to="/wishlist">Wishlist</NavLink>}
         {user && !isAdmin && <NavLink to="/library">Library</NavLink>}
+        {user && !isAdmin && (
+          <NavLink to="/friends">
+            <MessageCircle size={18} aria-hidden />
+            Friends
+          </NavLink>
+        )}
         {user && !isAdmin && <NavLink to="/orders">Orders</NavLink>}
         {user && (
           <NavLink to="/profile">
