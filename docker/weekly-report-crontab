@@ -1,1 +1,1 @@
-20 20 * * 2 cd /app && npm --prefix server run report:weekly-orders >> /proc/1/fd/1 2>> /proc/1/fd/2
+0 9 * * 5 cd /app && npm --prefix server run report:weekly-orders >> /proc/1/fd/1 2>> /proc/1/fd/2
