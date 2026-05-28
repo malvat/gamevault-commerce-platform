@@ -43,6 +43,7 @@ export const createApp = () => {
     app.use(morgan("dev"));
   }
 
+  // Setting up routes
   app.get("/api/health", (req, res) => {
     res.json({ status: "ok", service: "game-store-api" });
   });
@@ -52,6 +53,7 @@ export const createApp = () => {
   app.use("/api/orders", orderRoutes);
   app.use("/api/wishlist", wishlistRoutes);
 
+  // Host frontend on the server
   app.use(express.static(clientDistPath));
 
   app.get("*", (req, res, next) => {
