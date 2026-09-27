@@ -2,10 +2,6 @@
 
 A MERN game store where customers can register, log in, browse games, manage wishlists, purchase games through Stripe Checkout, view their library, add friends, and chat in real time. Admin users can create, edit, feature, and remove games from the catalog.
 
-## Live Demo
-
-Deployed demo: [http://98.81.36.117:5000/](http://98.81.36.117:5000/)
-
 ## Tech Stack
 
 - MongoDB, Express, React, Node.js
