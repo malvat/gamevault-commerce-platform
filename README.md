@@ -1,161 +1,196 @@
 # Game Store MERN
 
-A MERN game store where customers can register, log in, browse games, manage wishlists, purchase games through Stripe Checkout, view their library, add friends, and chat in real time. Admin users can create, edit, feature, and remove games from the catalog.
+> **Target Audience:** Developers, QA engineers, and technical reviewers setting up, testing, or evaluating the Game Store MERN application locally or via Docker.
 
-## Tech Stack
+A full-stack MERN digital game storefront where customers register, browse and filter titles, manage wishlists, purchase games through Stripe Checkout, access their library, add friends, and chat in real time. Administrators manage catalog items and featured listings through role-protected tools.
 
-- MongoDB, Express, React, Node.js
-- JWT authentication with role-based admin access
-- Vite React client with reusable state contexts
-- REST API for auth, games, wishlist, orders, friends, chat history, and admin catalog management
-- Socket.IO for real-time friend chat
-- Stripe Checkout for sandbox purchases
-- Docker support for single-server deployment and scheduled report generation
+## Contents
+
+- [Architecture & Tech Stack](#architecture--tech-stack)
+- [Getting Started](#getting-started)
+- [Demo Accounts](#demo-accounts)
+- [Features & Workflows](#features--workflows)
+- [Stripe Sandbox Checkout](#stripe-sandbox-checkout)
+- [Weekly Order Reports](#weekly-order-reports)
+- [Docker Deployment](#docker-deployment)
+- [Testing](#testing)
+- [Troubleshooting](#troubleshooting)
+- [Roadmap](#roadmap)
+
+---
+
+## Architecture & Tech Stack
+
+The application pairs a Vite-powered React client with a Node.js/Express REST API, MongoDB persistence, and real-time messaging:
+
+- **Frontend:** React (Vite) with reusable state contexts and protected customer/admin routes
+- **Backend & Storage:** Node.js, Express, REST API, and MongoDB
+- **Authentication & Real-Time:** JWT session handling, role-based access control, and Socket.IO one-to-one chat
+- **Payments & Reporting:** Stripe Checkout (test mode) and a scheduled Node reporting script
+- **Containerization:** Multi-service Docker Compose configuration for single-server hosting and scheduled jobs
+
+---
 
 ## Getting Started
 
-1. Install dependencies:
+Complete these steps in order to run the client and API locally during development.
 
-```bash
-npm run install:all
-```
+1. **Install dependencies** across the root, client, and server workspaces:
 
-2. Create `server/.env` from the example:
+   ```bash
+   npm run install:all
+   ```
 
-```bash
-cp server/.env.example server/.env
-```
+2. **Create your local environment file** from the provided template:
 
-3. Add your MongoDB connection string, JWT secret, and Stripe sandbox secret key to `server/.env`.
+   ```bash
+   cp server/.env.example server/.env
+   ```
 
-4. Seed demo users and games:
+3. **Configure environment variables** in `server/.env`, including your MongoDB connection string, JWT secret, Stripe sandbox secret key, and client URL.
 
-```bash
-npm run seed
-```
+4. **Seed sample data** to populate demo accounts and catalog games:
 
-5. Start the app:
+   ```bash
+   npm run seed
+   ```
 
-```bash
-npm run dev
-```
+5. **Start the development servers:**
 
-The client runs on `http://localhost:5173` and the API runs on `http://localhost:5000`.
+   ```bash
+   npm run dev
+   ```
+
+   - **Frontend (Vite):** `http://localhost:5173`
+   - **Backend API:** `http://localhost:5000`
+
+---
+
+## Demo Accounts
+
+Use the seeded accounts below to test customer and administrator workflows locally.
+
+- **Administrator:** `admin@gamestore.dev` / `Admin123!`
+- **Primary Customer:** `player@gamestore.dev` / `Player123!`
+- **Additional Customers:** `noah.player@test.com`, `ava.player@test.com`, `maya.player@test.com`, `liam.player@test.com`, `sofia.player@test.com`, `ethan.player@test.com`, `grace.player@test.com`, `owen.player@test.com` *(shared password: `Player123!`)*
+
+---
+
+## Features & Workflows
+
+### Accounts & Access Control
+- Customer registration and sign-in backed by JWT sessions
+- Editable customer profile supporting first and last name updates
+- Protected routes separating customer account views from administrator catalog controls
+
+### Catalog & Storefront
+- Searchable and filterable game catalog with genre filters, pagination, ratings, platform tags, and featured titles
+- Game detail pages displaying descriptions, reviews, wishlist actions, and purchase options
+- Wishlist management and shopping cart with quantity controls, ownership checks, and duplicate-purchase prevention
+- Order history and a library view for owned games with download actions
+
+### Social & Real-Time Chat
+- User lookup by email address
+- Friend request lifecycle: send, review incoming requests, accept, and reject
+- Real-time one-to-one messaging between connected friends via Socket.IO with persisted chat history
+
+### Administration
+- Admin dashboard to create, edit, delete, and feature catalog titles
+
+---
 
 ## Stripe Sandbox Checkout
 
-Purchases use Stripe Checkout in test mode. Add a test secret key to `server/.env`:
+Checkout runs in Stripe test mode so you can verify payment and order fulfillment flows without live charges.
 
-```bash
-STRIPE_SECRET_KEY=sk_test_your_stripe_sandbox_secret_key
-CLIENT_URL=http://localhost:5173
-```
+1. Add your test credentials and client URL to `server/.env`:
 
-Use Stripe test card `4242 4242 4242 4242` with any future expiry date, CVC, and ZIP code.
+   ```env
+   STRIPE_SECRET_KEY=sk_test_your_stripe_sandbox_secret_key
+   CLIENT_URL=http://localhost:5173
+   ```
 
-After a successful checkout, the app confirms the Stripe session, creates a paid order, prevents duplicate purchases of already-owned games, and makes purchased games available in the user's library.
+2. Complete checkout using Stripe's test card `4242 4242 4242 4242` with any future expiration date, CVC, and postal/ZIP code.
+
+3. After payment succeeds, the backend verifies the Stripe session, records a paid order, prevents duplicate purchases of already-owned games, and adds the title to the customer's library.
+
+---
 
 ## Weekly Order Reports
 
-The app includes an internal weekly reporting job. It is not an API endpoint; it is a Node script that connects to MongoDB, reads paid orders from the last 7 days, aggregates purchased games, and writes a JSON report to disk.
+Weekly sales summaries are generated by an internal Node script rather than an HTTP API endpoint. The script connects to MongoDB, queries paid orders from the trailing 7 days, aggregates purchased games, and writes a JSON report to `server/reports/weekly-orders/`.
 
-Run it manually for demos:
+### Run Manually
 
 ```bash
 npm --prefix server run report:weekly-orders
 ```
 
-Reports are written to:
+### Run on a Schedule with Docker
 
-```text
-server/reports/weekly-orders/
-```
-
-The Docker setup also includes a scheduler container that runs the same script every Friday at 9:00 AM:
+The `weekly-report-scheduler` service runs the same reporting script every Friday at 9:00 AM and mounts `server/reports/weekly-orders/` so output files remain accessible on your host machine:
 
 ```bash
 docker compose up --build weekly-report-scheduler
 ```
 
-The scheduler writes reports through a mounted volume, so generated JSON files appear in the local `server/reports/weekly-orders/` folder.
+---
 
-## Tests
+## Docker Deployment
 
-Run all tests:
-
-```bash
-npm test
-```
-
-Run the backend tests:
-
-```bash
-npm --prefix server test
-```
-
-Run the frontend tests:
-
-```bash
-npm --prefix client test
-```
-
-The backend suite covers auth/profile APIs, order creation rules, friend request and chat flows, and weekly report aggregation. The frontend suite covers signed-in navigation, profile form state, and Stripe checkout session creation from the cart.
-
-## Docker
-
-Build and run the app in one container:
+To run the production build with the compiled React client and API served from a single Node process at `http://localhost:5000`:
 
 ```bash
 docker compose up --build
 ```
 
-The container serves the API and built React app at `http://localhost:5000`.
+- **Environment configuration:** Docker reads variables from `server/.env` (created from `server/.env.example`).
+- **Scheduled reporting:** To run automated Friday 9:00 AM report generation in Docker, see [Run on a Schedule with Docker](#run-on-a-schedule-with-docker).
 
-Docker reads environment variables from `server/.env`. Use `server/.env.example` as the template.
+---
 
-The `weekly-report-scheduler` service runs the weekly order report job every Friday at 9:00 AM inside Docker. It shares the same report output folder through a volume:
+## Testing
 
-```bash
-docker compose up --build weekly-report-scheduler
-```
+Run automated test suites from the repository root or within each workspace:
 
-## Demo Accounts
+- **All test suites:**
 
-- Admin: `admin@gamestore.dev` / `Admin123!`
-- Customer: `player@gamestore.dev` / `Player123!`
-- Customer: `noah.player@test.com` / `Player123!`
-- Customer: `ava.player@test.com` / `Player123!`
-- Customer: `maya.player@test.com` / `Player123!`
-- Customer: `liam.player@test.com` / `Player123!`
-- Customer: `sofia.player@test.com` / `Player123!`
-- Customer: `ethan.player@test.com` / `Player123!`
-- Customer: `grace.player@test.com` / `Player123!`
-- Customer: `owen.player@test.com` / `Player123!`
+  ```bash
+  npm test
+  ```
 
-## Current Features
+- **Backend tests (`server`):**
 
-- Customer registration and login with JWT sessions
-- Protected routes for customer account pages and admin-only catalog tools
-- Editable customer profile with first and last name fields
-- Game catalog with search, genre filters, pagination, ratings, platform tags, and featured titles
-- Game detail pages with purchase actions, wishlist controls, and review display
-- Wishlist page for saved games
-- Cart with quantity controls, ownership checks, and duplicate-purchase prevention
-- Stripe sandbox checkout with checkout success confirmation
-- Customer order history
-- Purchased-game library with download actions
-- Friends page with email-based user search
-- Friend request sending, incoming request review, accept, and reject actions
-- Real-time one-to-one chat between accepted friends using Socket.IO
-- Persisted conversation history loaded from the API
-- Admin dashboard for adding, editing, deleting, and featuring games
-- Weekly JSON order reports with a Docker-level scheduler
-- Dockerized production build serving the React app and API from one Node server
+  ```bash
+  npm --prefix server test
+  ```
 
-## Next Feature Ideas
+  Covers authentication and profile endpoints, order creation and ownership rules, friend requests, chat history, and weekly report aggregation.
 
-- Unread chat badges and typing indicators
-- Friend removal or blocking
-- Game key delivery
+- **Frontend tests (`client`):**
+
+  ```bash
+  npm --prefix client test
+  ```
+
+  Covers signed-in navigation, profile form state, and Stripe Checkout session creation from the cart.
+
+---
+
+## Troubleshooting
+
+- **Checkout fails or does not redirect:** Confirm `STRIPE_SECRET_KEY` starts with `sk_test_` and `CLIENT_URL` matches your active frontend origin (`http://localhost:5173` in local dev) in `server/.env`.
+- **Database or seed errors on startup:** Verify MongoDB is running and the connection string in `server/.env` is valid before running `npm run seed` or `npm run dev`.
+- **Missing weekly report JSON files:** Check `server/reports/weekly-orders/` after running the manual script or `weekly-report-scheduler` container, and confirm paid orders exist within the last 7 days.
+
+---
+
+## Roadmap
+
+Planned enhancements beyond the current release include:
+
+- Unread message badges and typing indicators in chat
+- Friend removal and user blocking
+- Digital game key delivery
 - Sales analytics dashboard
-- Richer review creation and moderation tools
+- Expanded review creation and moderation tools
